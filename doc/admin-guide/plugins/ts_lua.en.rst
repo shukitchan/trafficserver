@@ -428,11 +428,11 @@ Additional Information:
 | TS_HTTP                            |  TS_LUA_HOOK                       |     YES              |    YES              |
 | _SEND_RESPONSE_HDR_HOOK            |  _SEND_RESPONSE_HDR                |                      |                     |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA                            |     YES              |    YES              |
-| _REQUEST_TRANSFORM_HOOK            |  _REQUEST_TRANSFORM                |                      |                     |
+| TS_HTTP                            |  TS_LUA_REQUEST_TRANSFORM          |     YES              |    YES              |
+| _REQUEST_TRANSFORM_HOOK            |                                    |                      |                     |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA                            |     YES              |    YES              |
-| _RESPONSE_TRANSFORM_HOOK           |  _RESPONSE_TRANSFORM               |                      |                     |
+| TS_HTTP                            |  TS_LUA_RESPONSE_TRANSFORM         |     YES              |    YES              |
+| _RESPONSE_TRANSFORM_HOOK           |                                    |                      |                     |
 +------------------------------------+------------------------------------+----------------------+---------------------+
 | TS_HTTP_TXN_CLOSE_HOOK             |  TS_LUA_HOOK_TXN_CLOSE             |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
