@@ -388,9 +388,7 @@ Additional Information:
    TS_HTTP_SELECT_ALT_HOOK,TS_LUA_HOOK_SELECT_ALT,NO,NO
    TS_HTTP_READ_CACHE_HDR_HOOK,TS_LUA_HOOK_READ_CACHE_HDR,YES,YES
    TS_HTTP_OS_DNS_HOOK,TS_LUA_HOOK_OS_DNS,YES,YES
-   TS_HTTP_CACHE_LOOKUP_COMPLETE
-_HOOK,TS_LUA_HOOK_CACHE_LOOKUP
-_COMPLETE,YES,YES
+   TS_HTTP_CACHE_LOOKUP_COMPLETE_HOOK,TS_LUA_HOOK_CACHE_LOOKUP_COMPLETE,YES,YES
    TS_HTTP_SEND_REQUEST_HDR_HOOK,TS_LUA_HOOK_SEND_REQUEST_HDR,YES,YES
    TS_HTTP_READ_RESPONSE_HDR_HOOK,TS_LUA_HOOK_READ_RESPONSE_HDR,YES,YES  
    TS_HTTP_SEND_RESPONSE_HDR_HOOK,TS_LUA_HOOK_SEND_RESPONSE_HDR,YES,YES
@@ -418,7 +416,8 @@ _COMPLETE,YES,YES
 +------------------------------------+------------------------------------+----------------------+---------------------+
 | TS_HTTP_OS_DNS_HOOK                |  TS_LUA_HOOK_OS_DNS                |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP_CACHE_LOOKUP_COMPLETE_HOOK |  TS_LUA_HOOK_CACHE_LOOKUP_COMPLETE |     YES              |    YES              |
+| TS_HTTP_CACHE_LOOKUP_COMPLETE      |  TS_LUA_HOOK_CACHE_LOOKUP          |     YES              |    YES              |
+| _HOOK                              |  _COMPLETE                         |                      |                     |
 +------------------------------------+------------------------------------+----------------------+---------------------+
 | TS_HTTP_SEND_REQUEST_HDR_HOOK      |  TS_LUA_HOOK_SEND_REQUEST_HDR      |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
