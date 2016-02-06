@@ -378,8 +378,8 @@ These constants are usually used in ts.hook method call.
 Additional Information:
 
 .. csv-table:: Additional Information
-   :header:Hook Point,Lua Hook Point constant,Hook function be registered within do_remap() via ts.hook()?,Hook function be registered within global context via ts.hook()?
-   :widths:20,20,3,3
+   :header: Hook Point,Lua Hook Point constant,Hook function be registered within do_remap() via ts.hook()?,Hook function be registered within global context via ts.hook()?
+   :widths: 20,20,3,3
    
    TS_HTTP_TXN_START_HOOK,TS_LUA_HOOK_TXN_START,NO,YES
    
