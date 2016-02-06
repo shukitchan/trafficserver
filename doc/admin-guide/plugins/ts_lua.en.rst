@@ -402,26 +402,19 @@ Additional Information:
 |                                    |                                    |   do_remap() via     |   global context via| 
 |                                    |                                    |   ts.hook()?         |   ts.hook()?        |
 +====================================+====================================+======================+=====================+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     NO               |    YES              |
-| _TXN_START_HOOK                    |  _TXN_START                        |                      |                     |
+| TS_HTTP_TXN_START_HOOK             |  TS_LUA_HOOK_TXN_START             |     NO               |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     NO               |    YES              |
-| _READ_REQUEST_HDR_HOOK             |  _READ_REQUEST_HDR                 |                      |                     |
+| TS_HTTP_READ_REQUEST_HDR_HOOK      |  TS_LUA_HOOK_READ_REQUEST_HDR      |     NO               |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     NO               |    YES              |
-| _PRE_REMAP_HOOK                    |  _PRE_REMAP                        |                      |                     |
+| TS_HTTP_PRE_REMAP_HOOK             |  TS_LUA_HOOK_PRE_REMAP             |     NO               |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     YES              |    YES              |
-| _POST_REMAP_HOOK                   |  _POST_REMAP                       |                      |                     |
+| TS_HTTP_POST_REMAP_HOOK            |  TS_LUA_HOOK_POST_REMAP            |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     NO               |    NO               |
-| _SELECT_ALT_HOOK                   |  _SELECT_ALT                       |                      |                     |
+| TS_HTTP_SELECT_ALT_HOOK            |  TS_LUA_HOOK_SELECT_ALT            |     NO               |    NO               |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     YES              |    YES              |
-| _READ_CACHE_HDR_HOOK               |  _READ_CACHE_HDR                   |                      |                     |
+| TS_HTTP_READ_CACHE_HDR_HOOK        |  TS_LUA_HOOK_READ_CACHE_HDR        |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     YES              |    YES              |
-| _OS_DNS_HOOK                       |  _OS_DNS                           |                      |                     |
+| TS_HTTP_OS_DNS_HOOK                |  TS_LUA_HOOK_OS_DNS                |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
 | TS_HTTP                            |  TS_LUA_HOOK                       |     YES              |    YES              |
 | _CACHE_LOOKUP_COMPLETE_HOOK        |  _CACHE_LOOKUP_COMPLETE            |                      |                     |
@@ -441,8 +434,7 @@ Additional Information:
 | TS_HTTP                            |  TS_LUA                            |     YES              |    YES              |
 | _RESPONSE_TRANSFORM_HOOK           |  _RESPONSE_TRANSFORM               |                      |                     |
 +------------------------------------+------------------------------------+----------------------+---------------------+
-| TS_HTTP                            |  TS_LUA_HOOK                       |     YES              |    YES              |
-| _TXN_CLOSE_HOOK                    |  _TXN_CLOSE                        |                      |                     |
+| TS_HTTP_TXN_CLOSE_HOOK             |  TS_LUA_HOOK_TXN_CLOSE             |     YES              |    YES              |
 +------------------------------------+------------------------------------+----------------------+---------------------+
 
 `TOP <#ts-lua-plugin>`_
