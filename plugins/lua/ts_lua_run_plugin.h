@@ -26,6 +26,7 @@ class RemapPluginInst;
 // Structure to track loaded plugins
 struct ts_lua_loaded_plugin {
   char                        *plugin_name;
+  char                        *plugin_args; // Include args in cache key
   RemapPluginInst             *plugin_inst;
   struct ts_lua_loaded_plugin *next;
 };

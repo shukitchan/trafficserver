@@ -30,10 +30,11 @@
 
 // External reference to the plugin factory (will be defined in ts_lua.cc)
 extern PluginFactory *ts_lua_plugin_factory;
+extern uint32_t ts_lua_elevate_access;
 
 // Forward declarations
 static int              ts_lua_run_plugin(lua_State *L);
-static RemapPluginInst *ts_lua_find_loaded_plugin(ts_lua_instance_conf *conf, const char *plugin_name);
+static RemapPluginInst *ts_lua_find_loaded_plugin(ts_lua_instance_conf *conf, const char *plugin_name, const char *plugin_args);
 static RemapPluginInst *ts_lua_load_plugin(const char *plugin_name, const char *plugin_args, const char *from_url,
                                            const char *to_url);
 
@@ -92,28 +93,35 @@ ts_lua_run_plugin(lua_State *L)
     plugin_args = luaL_checklstring(L, 2, &args_len);
   }
 
-  // Try to find already loaded plugin
-  plugin = ts_lua_find_loaded_plugin(conf, plugin_name);
+  // Try to find already loaded plugin (including args in cache key)
+  plugin = ts_lua_find_loaded_plugin(conf, plugin_name, plugin_args);
 
   // If not found, load the plugin
   if (plugin == nullptr) {
-    const char *from_url = "";
-    const char *to_url   = "";
+    char *from_url = nullptr;
+    char *to_url   = nullptr;
 
-    // Try to get remap URLs from the remap request info
-    if (http_ctx->rri && http_ctx->rri->requestBufp && http_ctx->rri->requestHdrp) {
-      TSMLoc url_loc = TS_NULL_MLOC;
-      if (TSHttpHdrUrlGet(http_ctx->rri->requestBufp, http_ctx->rri->requestHdrp, &url_loc) == TS_SUCCESS) {
-        int   url_len = 0;
-        char *url_str = TSUrlStringGet(http_ctx->rri->requestBufp, url_loc, &url_len);
-        if (url_str != nullptr) {
-          from_url = url_str;
-        }
-        TSHandleMLocRelease(http_ctx->rri->requestBufp, http_ctx->rri->requestHdrp, url_loc);
+    // Get remap URLs from the remap request info
+    if (http_ctx->rri && http_ctx->rri->requestBufp) {
+      if (http_ctx->rri->mapFromUrl != TS_NULL_MLOC) {
+        int len = 0;
+        from_url = TSUrlStringGet(http_ctx->rri->requestBufp, http_ctx->rri->mapFromUrl, &len);
+      }
+      if (http_ctx->rri->mapToUrl != TS_NULL_MLOC) {
+        int len = 0;
+        to_url = TSUrlStringGet(http_ctx->rri->requestBufp, http_ctx->rri->mapToUrl, &len);
       }
     }
 
-    plugin = ts_lua_load_plugin(plugin_name, plugin_args, from_url, to_url);
+    plugin = ts_lua_load_plugin(plugin_name, plugin_args, from_url ? from_url : "", to_url ? to_url : "");
+
+    // Free the URL strings
+    if (from_url) {
+      TSfree(from_url);
+    }
+    if (to_url) {
+      TSfree(to_url);
+    }
 
     if (plugin == nullptr) {
       TSError("[ts_lua][run_plugin] Failed to load plugin: %s", plugin_name);
@@ -121,9 +129,10 @@ ts_lua_run_plugin(lua_State *L)
       return 1;
     }
 
-    // Add to loaded plugins list
+    // Add to loaded plugins list (including args in cache)
     ts_lua_loaded_plugin *loaded_plugin = static_cast<ts_lua_loaded_plugin *>(TSmalloc(sizeof(ts_lua_loaded_plugin)));
     loaded_plugin->plugin_name          = TSstrdup(plugin_name);
+    loaded_plugin->plugin_args          = TSstrdup(plugin_args);
     loaded_plugin->plugin_inst          = plugin;
     loaded_plugin->next                 = conf->loaded_plugins;
     conf->loaded_plugins                = loaded_plugin;
@@ -144,12 +153,14 @@ ts_lua_run_plugin(lua_State *L)
 
 // Find an already loaded plugin in the instance configuration
 static RemapPluginInst *
-ts_lua_find_loaded_plugin(ts_lua_instance_conf *conf, const char *plugin_name)
+// Find an already loaded plugin in the instance configuration (match name and args)
+static RemapPluginInst *
+ts_lua_find_loaded_plugin(ts_lua_instance_conf *conf, const char *plugin_name, const char *plugin_args)
 {
   ts_lua_loaded_plugin *current = conf->loaded_plugins;
 
   while (current != nullptr) {
-    if (strcmp(current->plugin_name, plugin_name) == 0) {
+    if (strcmp(current->plugin_name, plugin_name) == 0 && strcmp(current->plugin_args, plugin_args) == 0) {
       return current->plugin_inst;
     }
     current = current->next;
@@ -193,10 +204,7 @@ ts_lua_load_plugin(const char *plugin_name, const char *plugin_args, const char 
 
   // Escalate privileges while loading the plugin (same as header_rewrite)
   {
-    uint32_t elevate_access = 0;
-
-    elevate_access = RecGetRecordInt("proxy.config.plugin.load_elevated").value_or(0);
-    ElevateAccess access(elevate_access ? ElevateAccess::FILE_PRIVILEGE : 0);
+    ElevateAccess access(ts_lua_elevate_access ? ElevateAccess::FILE_PRIVILEGE : 0);
 
     plugin = ts_lua_plugin_factory->getRemapPlugin(swoc::file::path(plugin_name), argc, argv, error, false);
   } // done elevating access

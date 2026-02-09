@@ -24,6 +24,7 @@
 #include <pthread.h>
 
 #include "ts_lua_util.h"
+#include "ts_lua_run_plugin.h"
 #include "proxy/http/remap/PluginFactory.h"
 #include "records/RecCore.h"
 
@@ -52,6 +53,9 @@ static pthread_key_t lua_state_key;
 
 // Global plugin factory for loading remap plugins dynamically
 PluginFactory *ts_lua_plugin_factory = nullptr;
+
+// Cached config value for plugin privilege elevation
+static uint32_t ts_lua_elevate_access = 0;
 
 // records.yaml entry injected by plugin
 static char const *const ts_lua_mgmt_state_str   = "proxy.config.plugin.lua.max_states";
@@ -321,6 +325,9 @@ TSRemapInit(TSRemapInterface *api_info, char *errbuf, int errbuf_size)
   if (ts_lua_plugin_factory == nullptr) {
     ts_lua_plugin_factory = new PluginFactory();
     ts_lua_plugin_factory->setRuntimeDir(RecConfigReadRuntimeDir()).addSearchDir(RecConfigReadPluginDir());
+    
+    // Cache the elevate access config value
+    ts_lua_elevate_access = RecGetRecordInt("proxy.config.plugin.load_elevated").value_or(0);
   }
 
   if (nullptr == ts_lua_main_ctx_array) {
@@ -504,6 +511,27 @@ TSRemapDeleteInstance(void *ih)
   ((ts_lua_instance_conf *)ih)->ref_count--;
   if (((ts_lua_instance_conf *)ih)->ref_count == 0) {
     Dbg(dbg_ctl, "Reference Count = %d , freeing...", ((ts_lua_instance_conf *)ih)->ref_count);
+    
+    // Clean up loaded plugins
+    ts_lua_instance_conf *conf = static_cast<ts_lua_instance_conf *>(ih);
+    ts_lua_loaded_plugin *current = conf->loaded_plugins;
+    while (current != nullptr) {
+      ts_lua_loaded_plugin *next = current->next;
+      
+      // Clean up the plugin instance
+      if (current->plugin_inst) {
+        current->plugin_inst->done();
+      }
+      
+      // Free the strings
+      TSfree(current->plugin_name);
+      TSfree(current->plugin_args);
+      TSfree(current);
+      
+      current = next;
+    }
+    conf->loaded_plugins = nullptr;
+    
     TSfree(ih);
   } else {
     Dbg(dbg_ctl, "Reference Count = %d , not freeing...", ((ts_lua_instance_conf *)ih)->ref_count);
