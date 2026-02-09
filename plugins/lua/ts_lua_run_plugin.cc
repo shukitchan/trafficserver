@@ -151,8 +151,6 @@ ts_lua_run_plugin(lua_State *L)
   return 1;
 }
 
-// Find an already loaded plugin in the instance configuration
-static RemapPluginInst *
 // Find an already loaded plugin in the instance configuration (match name and args)
 static RemapPluginInst *
 ts_lua_find_loaded_plugin(ts_lua_instance_conf *conf, const char *plugin_name, const char *plugin_args)

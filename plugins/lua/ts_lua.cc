@@ -55,7 +55,7 @@ static pthread_key_t lua_state_key;
 PluginFactory *ts_lua_plugin_factory = nullptr;
 
 // Cached config value for plugin privilege elevation
-static uint32_t ts_lua_elevate_access = 0;
+uint32_t ts_lua_elevate_access = 0;
 
 // records.yaml entry injected by plugin
 static char const *const ts_lua_mgmt_state_str   = "proxy.config.plugin.lua.max_states";
