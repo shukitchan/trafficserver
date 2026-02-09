@@ -24,6 +24,8 @@
 #include <pthread.h>
 
 #include "ts_lua_util.h"
+#include "proxy/http/remap/PluginFactory.h"
+#include "records/RecCore.h"
 
 extern "C" {
 #include "luajit.h"
@@ -47,6 +49,9 @@ static ts_lua_main_ctx *ts_lua_g_main_ctx_array = nullptr;
 
 static pthread_key_t lua_g_state_key;
 static pthread_key_t lua_state_key;
+
+// Global plugin factory for loading remap plugins dynamically
+PluginFactory *ts_lua_plugin_factory = nullptr;
 
 // records.yaml entry injected by plugin
 static char const *const ts_lua_mgmt_state_str   = "proxy.config.plugin.lua.max_states";
@@ -310,6 +315,12 @@ TSRemapInit(TSRemapInterface *api_info, char *errbuf, int errbuf_size)
     strncpy(errbuf, "[TSRemapInit] - Incorrect size of TSRemapInterface structure", errbuf_size - 1);
     errbuf[errbuf_size - 1] = '\0';
     return TS_ERROR;
+  }
+
+  // Initialize plugin factory for run_plugin support
+  if (ts_lua_plugin_factory == nullptr) {
+    ts_lua_plugin_factory = new PluginFactory();
+    ts_lua_plugin_factory->setRuntimeDir(RecConfigReadRuntimeDir()).addSearchDir(RecConfigReadPluginDir());
   }
 
   if (nullptr == ts_lua_main_ctx_array) {

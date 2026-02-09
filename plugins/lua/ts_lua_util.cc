@@ -36,6 +36,7 @@
 #include "ts_lua_stat.h"
 #include "ts_lua_fetch.h"
 #include "ts_lua_http_intercept.h"
+#include "ts_lua_run_plugin.h"
 
 static lua_State        *ts_lua_new_state();
 static void              ts_lua_init_registry(lua_State *L);
@@ -557,6 +558,7 @@ ts_lua_inject_ts_api(lua_State *L)
   ts_lua_inject_package_api(L);
   ts_lua_inject_stat_api(L);
   ts_lua_inject_fetch_api(L);
+  ts_lua_inject_run_plugin_api(L);
 
   lua_getglobal(L, "package");
   lua_getfield(L, -1, "loaded");
