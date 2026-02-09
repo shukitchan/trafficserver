@@ -26,12 +26,13 @@
 
 #include <sstream>
 #include <iomanip>
+#include <vector>
 
 // External reference to the plugin factory (will be defined in ts_lua.cc)
 extern PluginFactory *ts_lua_plugin_factory;
 
 // Forward declarations
-static int ts_lua_run_plugin(lua_State *L);
+static int              ts_lua_run_plugin(lua_State *L);
 static RemapPluginInst *ts_lua_find_loaded_plugin(ts_lua_instance_conf *conf, const char *plugin_name);
 static RemapPluginInst *ts_lua_load_plugin(const char *plugin_name, const char *plugin_args, const char *from_url,
                                            const char *to_url);
@@ -187,8 +188,8 @@ ts_lua_load_plugin(const char *plugin_name, const char *plugin_args, const char 
     argv[i + 2] = const_cast<char *>(tokens[i].c_str());
   }
 
-  std::string       error;
-  RemapPluginInst  *plugin = nullptr;
+  std::string      error;
+  RemapPluginInst *plugin = nullptr;
 
   // Escalate privileges while loading the plugin (same as header_rewrite)
   {

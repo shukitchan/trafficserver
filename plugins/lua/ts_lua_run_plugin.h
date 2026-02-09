@@ -20,10 +20,13 @@
 
 #include "ts_lua_common.h"
 
+// Forward declaration
+class RemapPluginInst;
+
 // Structure to track loaded plugins
 struct ts_lua_loaded_plugin {
-  char                      *plugin_name;
-  RemapPluginInst           *plugin_inst;
+  char                        *plugin_name;
+  RemapPluginInst             *plugin_inst;
   struct ts_lua_loaded_plugin *next;
 };
 
