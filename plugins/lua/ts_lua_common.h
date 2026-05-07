@@ -93,6 +93,9 @@ typedef struct {
   char const *svar;
 } ts_lua_var_item;
 
+// Forward declaration for loaded plugins
+struct ts_lua_loaded_plugin;
+
 typedef struct {
   char const *content;
   char        script[TS_LUA_MAX_SCRIPT_FNAME_LENGTH];
@@ -107,6 +110,8 @@ typedef struct {
   int ref_count;
 
   int init_func;
+
+  struct ts_lua_loaded_plugin *loaded_plugins; // Linked list of loaded plugins for run_plugin
 } ts_lua_instance_conf;
 
 /* lua state for vconn */

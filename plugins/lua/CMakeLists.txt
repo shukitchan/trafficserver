@@ -47,6 +47,7 @@ add_atsplugin(
   ts_lua_coroutine.cc
   ts_lua_fetch.cc
   ts_lua_constant.cc
+  ts_lua_run_plugin.cc
 )
 
 target_link_libraries(tslua PRIVATE luajit::luajit OpenSSL::Crypto)
